@@ -9,5 +9,7 @@ pip install -r requirements.txt
 ```
 ## Usage
 Data could be got at [LA](https://github.com/yulequan/UA-MT/tree/master/data).
+## Acknowledgement
+Part of the code is based on [UAMT](https://github.com/yulequan/UA-MT) and [CLIP-Driven Universal Model](https://github.com/ljwztc/CLIP-Driven-Universal-Model). Thanks for these authors for their valuable work.
 
 
