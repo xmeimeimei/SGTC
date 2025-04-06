@@ -13,7 +13,7 @@ The preprocess datasets could be got at [LA](https://github.com/yulequan/UA-MT/t
 ```
 python train_SGTC.py --gpu 0 --dataset 'la' --split 'train'
 ```
-## Test the moel
+## Test the model
 ```
 python test_sgtc.py --model 'xxxx'
 ```
