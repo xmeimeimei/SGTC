@@ -8,7 +8,7 @@ Python == 3.8 and install from the ```requirements.txt``` using:
 pip install -r requirements.txt
 ```
 ## Usage
-Data could be got at [LA](https://github.com/yulequan/UA-MT/tree/master/data).
+The preprocess datasets could be got at [LA](https://github.com/yulequan/UA-MT/tree/master/data) and [Desco](https://github.com/HengCai-NJU/DeSCO).
 ## Train the model
 ```
 python train_SGTC.py --gpu 0 --dataset 'la' --split 'train'
