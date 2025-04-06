@@ -13,6 +13,11 @@ The preprocess datasets could be got at [LA](https://github.com/yulequan/UA-MT/t
 ```
 python train_SGTC.py --gpu 0 --dataset 'la' --split 'train'
 ```
+## Test the moel
+```
+python test_sgtc.py --model 'xxxx'
+```
+
 ## Acknowledgement
 Part of the code is based on [UAMT](https://github.com/yulequan/UA-MT) and [CLIP-Driven Universal Model](https://github.com/ljwztc/CLIP-Driven-Universal-Model) and [Desco](https://github.com/HengCai-NJU/DeSCO). Thanks for these authors for their valuable work.
 
