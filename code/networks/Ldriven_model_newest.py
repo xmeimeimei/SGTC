@@ -4,7 +4,6 @@ import sys
 import collections
 from itertools import repeat
 from typing import List, Dict, Any
-sys.path.append("/home/ouc/data1/yk/DeSCO-master/code")
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -13,7 +12,6 @@ from torch.nn import LayerNorm
 from networks.vnet2 import VNet
 from scipy.special import softmax
 
-# version1 88.01 79.5 9.12 2.51
 class Adapter(nn.Module):
     def __init__(self, c_in, reduction=4):
         super(Adapter, self).__init__()
@@ -97,99 +95,6 @@ class Ldriven_model(nn.Module):
         out = torch.cat(logits_array,dim=0)
         return out
 
-# version-2
-# class Adapter(nn.Module):
-#     def __init__(self, c_in, reduction=4):
-#         super(Adapter, self).__init__()
-#         self.fc = nn.Sequential(
-#             nn.Linear(c_in, c_in // reduction, bias=False),
-#             nn.ReLU(inplace=True),
-#             nn.Linear(c_in // reduction, c_in, bias=False),
-#             nn.ReLU(inplace=True)
-#         )
-#     def forward(self, x):
-#         x = self.fc(x)
-#         return x
-# class Ldriven_model(nn.Module):
-#     def __init__(self,n_channels=3,n_classes=2, n_filters=16, normalization='none', has_dropout=False):
-#         super().__init__()
-#         self.backbone = VNet(n_channels=1, n_classes=n_classes, normalization='batchnorm', has_dropout=True)
-#         self.precls_conv = nn.Sequential(
-#             nn.GroupNorm(16, 16),
-#             nn.ReLU(inplace=True),
-#             nn.Conv3d(16, 8, kernel_size=1)
-#         )
-#         self.GAP = nn.Sequential(
-#             nn.GroupNorm(16, 256),
-#             nn.ReLU(inplace=True),
-#             torch.nn.AdaptiveAvgPool3d((1, 1, 1)),
-#             nn.Conv3d(256, 256, kernel_size=1, stride=1, padding=0)
-#         )
-#         self.adapter = Adapter(512, 4)
-#         # self.controller1 = nn.Conv3d(256 + 256, 256, kernel_size=1, stride=1, padding=0)
-#         # self.controller2 = nn.Conv3d(256, 128, kernel_size=1, stride=1, padding=0)
-#         # self.controller3 = nn.Conv3d(128, 64, kernel_size=1, stride=1, padding=0)
-#         # self.controller4 = nn.Conv3d(64, 8, kernel_size=1, stride=1, padding=0)
-#         self.controller2 = nn.Linear(256, 128)
-#         self.controller3 = nn.Linear(128, 64)
-#         self.controller4 = nn.Linear(64, 8)
-#         self.register_buffer('organ_embedding', torch.randn(n_classes, 512))
-#         self.text_to_vision = nn.Linear(512, 256)
-#         self.class_num = n_classes
-#         self.temp_conv = nn.Conv3d(16,8,kernel_size=1,padding=0)
-#         self.out_conv = nn.Conv3d(n_filters, n_classes, 1, padding=0)
-#         self.last_out_conv = nn.Conv3d(8,2,1,padding=0)
-#         self.attn_drop = nn.Dropout(0.1)
-#     def heads_forward(self, features, weights, biases):
-#         assert features.dim() == 5
-#         n_layers = len(weights)
-#         x = features
-#         for i, (w, b) in enumerate(zip(weights, biases)):
-#             # print(i, x.shape, w.shape)
-#             x = F.conv3d(
-#                 x, w, bias=b,
-#                 stride=1, padding=0)
-#             if i < n_layers - 1:
-#                 x = F.relu(x)
-#         return x
-#
-#     def crossAttention(self,Q,K,V):
-#         attention_scores = Q @ K.transpose(1,0)
-#         attention_weights = attention_scores.softmax(dim=-1)
-#         attention_weights = self.attn_drop(attention_weights)
-#         # output = np.matmul(attention_weights,V)
-#         output = attention_weights @ V
-#         return Q
-#
-#     def forward(self, x_in):
-#         dec4, out = self.backbone(x_in)
-#         task_encoding = F.relu(self.text_to_vision(self.adapter(self.organ_embedding)))
-#         # task_encoding = task_encoding.unsqueeze(2).unsqueeze(2).unsqueeze(2)  # 256
-#         # task_encoding torch.Size([31, 256, 1, 1, 1])
-#         x_feat = self.GAP(dec4) # 256
-#         b = x_feat.shape[0]
-#         logits_array = []
-#         for i in range(b):
-#             # x_cond = torch.cat([x_feat[i].unsqueeze(0),task_encoding],1)
-#             #x_cond = torch.cat([x_feat[i].unsqueeze(0), x_feat[i].unsqueeze(0)], 1)
-#
-#             f_img = x_feat[i].squeeze(1).squeeze(1).squeeze(1)
-#             f_img = f_img.unsqueeze(0)
-#             fit = self.crossAttention(task_encoding,f_img,f_img)
-#             params = self.controller2(fit)
-#             params = self.controller3(params)
-#             params = self.controller4(params).unsqueeze(2).unsqueeze(2).unsqueeze(2)
-#             # params.squeeze_(-1).squeeze_(-1).squeeze_(-1)
-#             temp2 = out[i].unsqueeze(0)
-#             #head_inputs = out[i].unsqueeze(0)
-#             head_inputs = self.precls_conv(out[i].unsqueeze(0))
-#             params = params.expand_as(head_inputs)
-#             head_inputs = head_inputs + params
-#
-#             logits = self.last_out_conv(head_inputs)
-#             logits_array.append(logits)
-#         out = torch.cat(logits_array,dim=0)
-#         return out
 if __name__ == '__main__':
     # compute FLOPS & PARAMETERS
     from ptflops import get_model_complexity_info
