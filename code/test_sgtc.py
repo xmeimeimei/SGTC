@@ -1,7 +1,7 @@
 import os
 import argparse
 import torch
-from networks.vnet import VNet
+from networks.vnet2 import VNet
 from test_sgtc_util import test_all_case,test_all_case_crn
 from networks.Ldriven_model_newest import Ldriven_model
 
